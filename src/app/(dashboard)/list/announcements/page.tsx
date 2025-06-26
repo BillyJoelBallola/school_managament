@@ -4,12 +4,12 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
-import { Announcement, Class, Prisma } from "@/generated/prisma";
+import { Announcement, Class } from "@/generated/prisma";
 import { getAllAnnouncement } from "@/actions/announcement.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
-import { currentUserId, role } from "@/lib/settings";
+import { role } from "@/lib/settings";
 
 type AnnouncementList = Announcement & { class: Class };
 
@@ -61,38 +61,10 @@ async function AnnouncementListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.AnnouncementWhereInput = {};
-
-  const roleCondition = {
-    teacher: { lessons: { some: { teacherId: currentUserId! } } },
-    student: { students: { some: { id: currentUserId! } } },
-    parent: { students: { some: { parentId: currentUserId! } } },
-  };
-
-  query.OR = [
-    { classId: null },
-    { class: roleCondition[role as keyof typeof roleCondition] || {} },
-    ...(role === "admin" ? [{ classId: { not: null } }] : []),
-  ];
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "search":
-            query.title = value;
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
-
   const { announcements, count } = await getAllAnnouncement(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

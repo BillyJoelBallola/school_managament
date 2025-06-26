@@ -8,7 +8,7 @@ import { role } from "@/lib/settings";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 
-import { Prisma, Subject, Teacher } from "@/generated/prisma";
+import { Subject, Teacher } from "@/generated/prisma";
 import { getAllSubject } from "@/actions/subject.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
 
@@ -55,24 +55,10 @@ async function SubjectListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.SubjectWhereInput = {};
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "search":
-            query.name = { contains: value, mode: "insensitive" };
-            break;
-        }
-      }
-    }
-  }
-
   const { subjects, count } = await getAllSubject(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

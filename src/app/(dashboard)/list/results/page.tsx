@@ -4,11 +4,10 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
-import { currentUserId, role } from "@/lib/settings";
+import { role } from "@/lib/settings";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 
-import { Prisma } from "@/generated/prisma";
 import { getAllResult } from "@/actions/result.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
 
@@ -92,49 +91,10 @@ async function ResultListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.ResultWhereInput = {};
-
-  switch (role) {
-    case "admin":
-      break;
-    case "teacher":
-      query.OR = [
-        { exam: { lesson: { teacherId: currentUserId! } } },
-        { assignment: { lesson: { teacherId: currentUserId! } } },
-      ];
-      break;
-    case "student":
-      query.studentId = currentUserId!;
-      break;
-    case "parent":
-      query.student = { parentId: currentUserId! };
-      break;
-    default:
-      break;
-  }
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "studentId":
-            query.studentId = value;
-            break;
-          case "search":
-            query.OR = [
-              { exam: { title: { contains: value, mode: "insensitive" } } },
-              { student: { name: { contains: value, mode: "insensitive" } } },
-            ];
-            break;
-        }
-      }
-    }
-  }
-
   const { results: dataResponse, count } = await getAllResult(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   const results = dataResponse.map((item) => {

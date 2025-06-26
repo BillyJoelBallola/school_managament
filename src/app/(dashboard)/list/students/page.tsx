@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 import { role } from "@/lib/settings";
 import { ITEM_PER_PAGE } from "@/lib/config";
-import { Class, Prisma, Student } from "@/generated/prisma";
+import { Class, Student } from "@/generated/prisma";
 import { getAllStudent } from "@/actions/student.actions";
 
 import { ArrowDownWideNarrow, ExternalLink, ListFilter } from "lucide-react";
@@ -81,33 +81,10 @@ async function StudentListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.StudentWhereInput = {};
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "teacherId":
-            query.class = {
-              lessons: {
-                some: {
-                  teacherId: value,
-                },
-              },
-            };
-            break;
-          case "search":
-            query.name = { contains: value, mode: "insensitive" };
-            break;
-        }
-      }
-    }
-  }
-
   const { students, count } = await getAllStudent(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

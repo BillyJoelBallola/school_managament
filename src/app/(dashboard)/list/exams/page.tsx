@@ -68,54 +68,10 @@ async function ExamListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.ExamWhereInput = {};
-
-  switch (role) {
-    case "admin":
-      break;
-    case "teacher":
-      query.lesson = { teacherId: currentUserId! };
-      break;
-    case "student":
-      query.lesson = { class: { students: { some: { id: currentUserId! } } } };
-      break;
-    case "parent":
-      query.lesson = {
-        class: { students: { some: { parentId: currentUserId! } } },
-      };
-      break;
-    default:
-      break;
-  }
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "classId":
-            query.lesson = { classId: parseInt(value) };
-            break;
-          case "teacherId":
-            query.lesson = { teacherId: value };
-            break;
-          case "search":
-            query.lesson = {
-              subject: {
-                name: { contains: value, mode: "insensitive" },
-              },
-            };
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
-
   const { exams, count } = await getAllExam(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

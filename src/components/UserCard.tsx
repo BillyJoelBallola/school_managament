@@ -1,8 +1,15 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
+import { getUserCount } from "@/actions/dashboard.actions";
 
-function UserCard({ type }: { type: string }) {
+async function UserCard({
+  type,
+}: {
+  type: "admin" | "teacher" | "student" | "parent";
+}) {
+  const count = await getUserCount(type);
+
   return (
     <Card className="flex-1 min-w-[130px] gap-0">
       <CardHeader className="flex items-center justify-between">
@@ -14,7 +21,7 @@ function UserCard({ type }: { type: string }) {
         </Button>
       </CardHeader>
       <CardContent>
-        <h1 className="text-2xl font-semibold my-4">1,294</h1>
+        <h1 className="text-2xl font-semibold my-4">{count}</h1>
         <span className="capitalize text-sm font-medium text-muted-foreground">
           {type}
         </span>

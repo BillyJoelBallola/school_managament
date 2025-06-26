@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
-import { Class, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma";
+import { Class, Lesson, Subject, Teacher } from "@/generated/prisma";
 import { getAllLesson } from "@/actions/lesson.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
 import { role } from "@/lib/settings";
@@ -63,33 +63,10 @@ async function LessonListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.LessonWhereInput = {};
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "classId":
-            query.classId = parseInt(value);
-            break;
-          case "teacherId":
-            query.teacherId = value;
-            break;
-          case "search":
-            query.OR = [
-              { subject: { name: { contains: value, mode: "insensitive" } } },
-              { teacher: { name: { contains: value, mode: "insensitive" } } },
-            ];
-            break;
-        }
-      }
-    }
-  }
-
   const { lessons, count } = await getAllLesson(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

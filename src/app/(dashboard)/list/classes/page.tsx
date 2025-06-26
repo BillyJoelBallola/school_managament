@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 import { role } from "@/lib/settings";
 import { ITEM_PER_PAGE } from "@/lib/config";
-import { Class, Grade, Prisma, Teacher } from "@/generated/prisma";
+import { Class, Grade, Teacher } from "@/generated/prisma";
 import { getAllClass } from "@/actions/class.actions";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
@@ -66,34 +66,10 @@ async function ClassListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.ClassWhereInput = {};
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "studentId":
-            query.students = {
-              some: {
-                id: value,
-              },
-            };
-            break;
-          case "supervisorId":
-            query.supervisorId = value;
-            break;
-          case "search":
-            query.name = { contains: value, mode: "insensitive" };
-            break;
-        }
-      }
-    }
-  }
-
   const { classes, count } = await getAllClass(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

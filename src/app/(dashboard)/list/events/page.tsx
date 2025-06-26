@@ -5,9 +5,9 @@ import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
 import { getAllEvent } from "@/actions/event.actions";
-import { Class, Event, Prisma } from "@/generated/prisma";
+import { Class, Event } from "@/generated/prisma";
 import { ITEM_PER_PAGE } from "@/lib/config";
-import { currentUserId, role } from "@/lib/settings";
+import { role } from "@/lib/settings";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 
@@ -85,36 +85,10 @@ async function EventListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.EventWhereInput = {};
-
-  const roleCondition = {
-    teacher: { lessons: { some: { teacherId: currentUserId! } } },
-    student: { students: { some: { id: currentUserId! } } },
-    parent: { students: { some: { parentId: currentUserId! } } },
-  };
-
-  query.OR = [
-    { classId: null },
-    { class: roleCondition[role as keyof typeof roleCondition] || {} },
-    ...(role === "admin" ? [{ classId: { not: null } }] : []),
-  ];
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "search":
-            query.title = value;
-            break;
-        }
-      }
-    }
-  }
-
   const { events, count } = await getAllEvent(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (

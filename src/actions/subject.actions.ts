@@ -1,13 +1,28 @@
 "use server";
 
+import { Prisma } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 
 export async function getAllSubject(
   take: number,
   skip: number,
-  query?: Object
+  queryParams?: Object
 ) {
   try {
+    const query: Prisma.SubjectWhereInput = {};
+
+    if (queryParams) {
+      for (const [key, value] of Object.entries(queryParams)) {
+        if (value !== undefined) {
+          switch (key) {
+            case "search":
+              query.name = { contains: value, mode: "insensitive" };
+              break;
+          }
+        }
+      }
+    }
+
     const [subjects, count] = await prisma.$transaction([
       prisma.subject.findMany({
         where: query,

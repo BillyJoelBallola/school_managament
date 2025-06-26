@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
-import { Parent, Prisma, Student } from "@/generated/prisma";
+import { Parent, Student } from "@/generated/prisma";
 import { getAllParent } from "@/actions/parent.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
 import { role } from "@/lib/settings";
@@ -65,24 +65,10 @@ async function ParentListPage({
 
   const pageNumber = page ? parseInt(page) : 1;
 
-  const query: Prisma.ParentWhereInput = {};
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "search":
-            query.name = { contains: value, mode: "insensitive" };
-            break;
-        }
-      }
-    }
-  }
-
   const { parents, count } = await getAllParent(
     ITEM_PER_PAGE,
     ITEM_PER_PAGE * (pageNumber - 1),
-    query
+    queryParams
   );
 
   return (
