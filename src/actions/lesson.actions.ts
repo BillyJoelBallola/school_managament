@@ -52,3 +52,26 @@ export async function getAllLesson(
     throw new Error("Failed to fetch lessons");
   }
 }
+
+export async function getBigCalendarData({
+  type,
+  id,
+}: {
+  type: "teacherId" | "classId";
+  id: string | number;
+}) {
+  try {
+    const data = await prisma.lesson.findMany({
+      where: {
+        ...(type === "teacherId"
+          ? { teacherId: id as string }
+          : { classId: id as number }),
+      },
+    });
+
+    return data;
+  } catch (error: any) {
+    console.error("error in getBigCalendarData(): ", error);
+    throw new Error("Failed to fetch lessons");
+  }
+}

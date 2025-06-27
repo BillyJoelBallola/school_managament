@@ -4,13 +4,16 @@ import { useState } from "react";
 
 import { Calendar, dayjsLocalizer, View, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
-import { calendarEvents } from "@/lib/data";
+import { adjustScheduleToCurrentWeek } from "@/lib/settings";
 import dayjs from "dayjs";
 
 const localizer = dayjsLocalizer(dayjs);
 
-const BigCalendar = () => {
+const BigCalendar = ({
+  schedule,
+}: {
+  schedule: { title: string; start: Date; end: Date }[];
+}) => {
   const [view, setView] = useState<View>(Views.WORK_WEEK);
 
   const handleOnView = (selectedView: View) => {
@@ -20,7 +23,7 @@ const BigCalendar = () => {
   return (
     <Calendar
       localizer={localizer}
-      events={calendarEvents}
+      events={schedule}
       startAccessor="start"
       endAccessor="end"
       views={["work_week", "day"]}

@@ -23,7 +23,9 @@ async function EventList({ dateParam }: { dateParam: string | undefined }) {
                 })}
               </span>
             </div>
-            <p className="text-sm">{event.description}</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {event.description}
+            </p>
           </div>
         ))
       ) : (

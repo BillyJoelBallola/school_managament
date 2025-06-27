@@ -22,12 +22,19 @@ async function Announcements() {
             announcements.map((announcement) => (
               <div
                 key={announcement.id}
-                className="flex items-center justify-between bg-neutral-100 dark:bg-neutral-800 p-4 rounded-md"
+                className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-md border-t-4"
               >
-                <h2 className="font-semibold text-sm">{announcement.title}</h2>
-                <span className="text-xs text-muted-foreground">
-                  {new Intl.DateTimeFormat("en-US").format(announcement.date)}
-                </span>
+                <div className="flex items-center justify-between">
+                  <h2 className="font-semibold text-sm">
+                    {announcement.title}
+                  </h2>
+                  <span className="text-xs text-muted-foreground">
+                    {new Intl.DateTimeFormat("en-US").format(announcement.date)}
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {announcement.description}
+                </p>
               </div>
             ))
           ) : (
