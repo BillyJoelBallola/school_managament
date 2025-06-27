@@ -16,7 +16,6 @@ import {
   Megaphone,
   User,
   Settings,
-  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

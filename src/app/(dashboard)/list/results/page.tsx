@@ -10,6 +10,11 @@ import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 
 import { getAllResult } from "@/actions/result.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Results",
+};
 
 type ResultList = {
   id: string;

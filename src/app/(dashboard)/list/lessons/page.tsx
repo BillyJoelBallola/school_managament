@@ -10,6 +10,11 @@ import { ITEM_PER_PAGE } from "@/lib/config";
 import { role } from "@/lib/settings";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Lessons",
+};
 
 type LessonList = Lesson & { class: Class } & { teacher: Teacher } & {
   subject: Subject;

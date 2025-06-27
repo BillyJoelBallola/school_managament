@@ -5,11 +5,16 @@ import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
 import { getAllExam } from "@/actions/exam.action";
-import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma";
+import { Class, Exam, Subject, Teacher } from "@/generated/prisma";
 import { ITEM_PER_PAGE } from "@/lib/config";
-import { currentUserId, role } from "@/lib/settings";
+import { role } from "@/lib/settings";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Exams",
+};
 
 type ExamList = Exam & {
   lesson: { subject: Subject; class: Class; teacher: Teacher };

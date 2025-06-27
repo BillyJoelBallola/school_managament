@@ -10,6 +10,11 @@ import { Class, Grade, Teacher } from "@/generated/prisma";
 import { getAllClass } from "@/actions/class.actions";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Classes",
+};
 
 type ClassList = Class & { supervisor: Teacher } & { grade: Grade };
 

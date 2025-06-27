@@ -11,6 +11,11 @@ import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 import { Subject, Teacher } from "@/generated/prisma";
 import { getAllSubject } from "@/actions/subject.actions";
 import { ITEM_PER_PAGE } from "@/lib/config";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Subjects",
+};
 
 type SubjectList = Subject & { teachers: Teacher[] };
 
