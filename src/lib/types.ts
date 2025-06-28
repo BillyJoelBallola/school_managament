@@ -22,6 +22,7 @@ export interface IFormDialog {
   type: FormType["type"];
   data?: any;
   id?: number | string;
+  relatedData?: any;
 }
 
 export interface IInputField {
@@ -44,4 +45,10 @@ export interface ISelectField {
   error?: FieldError;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   selectItems: { value: string; name: string }[];
+}
+
+export interface IMultipleSelectField
+  extends Omit<ISelectField, "selectItems" | "defaultValue"> {
+  selectItems: { value: string; label: string }[];
+  defaultValue: Object[];
 }

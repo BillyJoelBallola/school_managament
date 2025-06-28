@@ -1,4 +1,4 @@
-import FormDialog from "@/components/FormDialog";
+import FormContainer from "@/components/forms/FormContainer";
 import TablePagination from "@/components/TablePagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -42,8 +42,8 @@ const renderRow = (item: SubjectList) => (
       <div className="flex items-center gap-1">
         {role === "admin" && (
           <>
-            <FormDialog table="subject" type="update" data={item} />
-            <FormDialog table="subject" type="delete" id={item.id} />
+            <FormContainer table="subject" type="update" data={item} />
+            <FormContainer table="subject" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -79,7 +79,9 @@ async function SubjectListPage({
             <Button variant="outline" size="icon">
               <ArrowDownWideNarrow />
             </Button>
-            {role === "admin" && <FormDialog table="subject" type="create" />}
+            {role === "admin" && (
+              <FormContainer table="subject" type="create" />
+            )}
           </div>
         </div>
       </div>

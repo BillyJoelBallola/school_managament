@@ -1,6 +1,12 @@
 "use client";
 
-import React from "react";
+import React, {
+  FormEvent,
+  startTransition,
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,9 +19,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateUpdateFormType, IFormDialog } from "@/lib/types";
-import { Pencil, Plus, SquarePen, Trash } from "lucide-react";
+import { toast } from "sonner";
+import { Loader2, Pencil, Plus, SquarePen, Trash } from "lucide-react";
+
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { deleteSubject } from "@/actions/subject.actions";
+import { CreateUpdateFormType, IFormDialog } from "@/lib/types";
+
+const deleteActionMap = {
+  subject: deleteSubject,
+  class: deleteSubject,
+  teacher: deleteSubject,
+  student: deleteSubject,
+  parent: deleteSubject,
+  lesson: deleteSubject,
+  exam: deleteSubject,
+  assignment: deleteSubject,
+  result: deleteSubject,
+  attendance: deleteSubject,
+  event: deleteSubject,
+  announcement: deleteSubject,
+};
 
 const TeacherForm = dynamic(() => import("@/components/forms/TeacherForm"), {
   loading: () => <h1>Loading...</h1>,
@@ -68,19 +93,31 @@ const AnnouncementForm = dynamic(
 );
 
 const forms: {
-  [key: string]: (type: CreateUpdateFormType, data?: any) => React.ReactNode;
+  [key: string]: (
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    type: CreateUpdateFormType,
+    data?: any,
+    relatedData?: any
+  ) => React.ReactNode;
 } = {
-  teacher: (type, data) => <TeacherForm type={type} data={data} />,
-  student: (type, data) => <StudentForm type={type} data={data} />,
-  parent: (type, data) => <ParentForm type={type} data={data} />,
-  subject: (type, data) => <SubjectForm type={type} data={data} />,
-  class: (type, data) => <ClassForm type={type} data={data} />,
-  lesson: (type, data) => <LessonForm type={type} data={data} />,
-  exam: (type, data) => <ExamForm type={type} data={data} />,
-  assignment: (type, data) => <AssignmentForm type={type} data={data} />,
-  result: (type, data) => <ResultForm type={type} data={data} />,
-  event: (type, data) => <EventForm type={type} data={data} />,
-  announcement: (type, data) => <AnnouncementForm type={type} data={data} />,
+  // teacher: (type, data) => <TeacherForm type={type} data={data} />,
+  // student: (type, data) => <StudentForm type={type} data={data} />,
+  // parent: (type, data) => <ParentForm type={type} data={data} />,
+  subject: (setOpen, type, data, relatedData) => (
+    <SubjectForm
+      setOpen={setOpen}
+      type={type}
+      data={data}
+      relatedData={relatedData}
+    />
+  ),
+  // class: (type, data) => <ClassForm type={type} data={data} />,
+  // lesson: (type, data) => <LessonForm type={type} data={data} />,
+  // exam: (type, data) => <ExamForm type={type} data={data} />,
+  // assignment: (type, data) => <AssignmentForm type={type} data={data} />,
+  // result: (type, data) => <ResultForm type={type} data={data} />,
+  // event: (type, data) => <EventForm type={type} data={data} />,
+  // announcement: (type, data) => <AnnouncementForm type={type} data={data} />,
 };
 
 function triggerButton(type: string, table: string) {
@@ -119,7 +156,33 @@ function triggerButton(type: string, table: string) {
   }
 }
 
-function FormDialog({ table, type, data, id }: IFormDialog) {
+function FormDialog({ table, type, data, id, relatedData }: IFormDialog) {
+  const [open, setOpen] = useState(false);
+
+  const [state, formAction, pending] = useActionState(deleteActionMap[table], {
+    success: false,
+    error: false,
+  });
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) {
+      toast.success(`Subject has been deleted!`);
+      setOpen(false);
+      router.refresh();
+    }
+  }, [state.success]);
+
   const Form = () => {
     return type === "delete" && id ? (
       <DialogContent className="sm:max-w-[425px]">
@@ -133,23 +196,36 @@ function FormDialog({ table, type, data, id }: IFormDialog) {
             ?
           </DialogDescription>
         </DialogHeader>
-        <form id="deleteForm" />
+        <form id="deleteForm" onSubmit={onSubmit}>
+          <input
+            type="text | number"
+            name="id"
+            defaultValue={id}
+            hidden
+            readOnly
+          />
+        </form>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button variant="destructive" form="deleteForm" type="submit">
-            Delete
+          <Button
+            disabled={pending}
+            variant="destructive"
+            form="deleteForm"
+            type="submit"
+          >
+            {pending && <Loader2 className="animate-spin" />} Delete
           </Button>
         </DialogFooter>
       </DialogContent>
-    ) : type !== "delete" ? (
-      forms[table](type, data)
+    ) : type === "create" || type === "update" ? (
+      forms[table](setOpen, type, data, relatedData)
     ) : null;
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{triggerButton(type, table)}</DialogTrigger>
       <Form />
     </Dialog>
