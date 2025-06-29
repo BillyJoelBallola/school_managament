@@ -1,6 +1,5 @@
-import FormDialog from "@/components/FormDialog";
-import TablePagination from "@/components/TablePagination";
 import Table from "@/components/Table";
+import TablePagination from "@/components/TablePagination";
 import TableSearch from "@/components/TableSearch";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +10,7 @@ import { getAllClass } from "@/actions/class.actions";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 import { Metadata } from "next";
+import FormContainer from "@/components/forms/FormContainer";
 
 export const metadata: Metadata = {
   title: "Classes",
@@ -53,8 +53,8 @@ const renderRow = (item: ClassList) => (
       <div className="flex items-center gap-1">
         {role === "admin" && (
           <>
-            <FormDialog table="class" type="update" data={item} />
-            <FormDialog table="class" type="delete" id={item.id} />
+            <FormContainer table="class" type="update" data={item} />
+            <FormContainer table="class" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -90,7 +90,7 @@ async function ClassListPage({
             <Button variant="outline" size="icon">
               <ArrowDownWideNarrow />
             </Button>
-            {role === "admin" && <FormDialog table="class" type="create" />}
+            {role === "admin" && <FormContainer table="class" type="create" />}
           </div>
         </div>
       </div>

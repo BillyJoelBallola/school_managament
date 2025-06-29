@@ -97,7 +97,7 @@ export async function updateSubject(
 
     return { success: true, error: false };
   } catch (error: any) {
-    console.error("error in createSubject(): ", error);
+    console.error("error in updateSubject(): ", error);
     return { success: false, error: true };
   }
 }

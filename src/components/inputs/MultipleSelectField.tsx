@@ -1,7 +1,6 @@
 import { IMultipleSelectField } from "@/lib/types";
 import { Label } from "@/components/ui/label";
 import React from "react";
-import { Check } from "lucide-react";
 
 function MultipleSelectField({
   label,
@@ -29,7 +28,14 @@ function MultipleSelectField({
         className="border rounded-lg shadow-lg p-2 text-sm dark:bg-neutral-900"
       >
         {selectItems.map((item) => (
-          <option key={item.value} value={item.value}>
+          <option
+            key={item.value}
+            value={item.value}
+            className={`${
+              defaultValue?.find((val: any) => val.id === item.value) &&
+              "font-semibold text-blue-500"
+            }`}
+          >
             {item.label}
           </option>
         ))}

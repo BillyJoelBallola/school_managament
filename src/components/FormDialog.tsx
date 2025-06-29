@@ -26,15 +26,18 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { deleteSubject } from "@/actions/subject.actions";
 import { CreateUpdateFormType, IFormDialog } from "@/lib/types";
+import { deleteClass } from "@/actions/class.actions";
+import { deleteLesson } from "@/actions/lesson.actions";
+import { deleteExam } from "@/actions/exam.action";
 
 const deleteActionMap = {
   subject: deleteSubject,
-  class: deleteSubject,
+  class: deleteClass,
   teacher: deleteSubject,
   student: deleteSubject,
   parent: deleteSubject,
-  lesson: deleteSubject,
-  exam: deleteSubject,
+  lesson: deleteLesson,
+  exam: deleteExam,
   assignment: deleteSubject,
   result: deleteSubject,
   attendance: deleteSubject,
@@ -111,9 +114,30 @@ const forms: {
       relatedData={relatedData}
     />
   ),
-  // class: (type, data) => <ClassForm type={type} data={data} />,
-  // lesson: (type, data) => <LessonForm type={type} data={data} />,
-  // exam: (type, data) => <ExamForm type={type} data={data} />,
+  class: (setOpen, type, data, relatedData) => (
+    <ClassForm
+      setOpen={setOpen}
+      type={type}
+      data={data}
+      relatedData={relatedData}
+    />
+  ),
+  lesson: (setOpen, type, data, relatedData) => (
+    <LessonForm
+      setOpen={setOpen}
+      type={type}
+      data={data}
+      relatedData={relatedData}
+    />
+  ),
+  exam: (setOpen, type, data, relatedData) => (
+    <ExamForm
+      setOpen={setOpen}
+      type={type}
+      data={data}
+      relatedData={relatedData}
+    />
+  ),
   // assignment: (type, data) => <AssignmentForm type={type} data={data} />,
   // result: (type, data) => <ResultForm type={type} data={data} />,
   // event: (type, data) => <EventForm type={type} data={data} />,
@@ -177,7 +201,7 @@ function FormDialog({ table, type, data, id, relatedData }: IFormDialog) {
 
   useEffect(() => {
     if (state.success) {
-      toast.success(`Subject has been deleted!`);
+      toast.success(`${table} has been deleted!`);
       setOpen(false);
       router.refresh();
     }

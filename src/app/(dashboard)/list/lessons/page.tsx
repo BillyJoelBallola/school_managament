@@ -1,7 +1,7 @@
-import FormDialog from "@/components/FormDialog";
 import TablePagination from "@/components/TablePagination";
-import Table from "@/components/Table";
+import FormContainer from "@/components/forms/FormContainer";
 import TableSearch from "@/components/TableSearch";
+import Table from "@/components/Table";
 import { Button } from "@/components/ui/button";
 
 import { Class, Lesson, Subject, Teacher } from "@/generated/prisma";
@@ -50,8 +50,8 @@ const renderRow = (item: LessonList) => (
       <div className="flex items-center gap-1">
         {role === "admin" && (
           <>
-            <FormDialog table="lesson" type="update" data={item} />
-            <FormDialog table="lesson" type="delete" id={item.id} />
+            <FormContainer table="lesson" type="update" data={item} />
+            <FormContainer table="lesson" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -87,7 +87,7 @@ async function LessonListPage({
             <Button variant="outline" size="icon">
               <ArrowDownWideNarrow />
             </Button>
-            {role === "admin" && <FormDialog table="lesson" type="create" />}
+            {role === "admin" && <FormContainer table="lesson" type="create" />}
           </div>
         </div>
       </div>

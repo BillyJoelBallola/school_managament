@@ -1,5 +1,5 @@
 import React from "react";
-import { FieldError } from "react-hook-form";
+import { Control, FieldError } from "react-hook-form";
 
 export type FormType = { type: "create" | "update" | "delete" };
 
@@ -39,8 +39,8 @@ export interface IInputField {
 export interface ISelectField {
   className?: string;
   label: string;
-  register: any;
   name: string;
+  control?: Control<any>;
   defaultValue?: string;
   error?: FieldError;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -50,5 +50,5 @@ export interface ISelectField {
 export interface IMultipleSelectField
   extends Omit<ISelectField, "selectItems" | "defaultValue"> {
   selectItems: { value: string; label: string }[];
-  defaultValue: Object[];
+  defaultValue?: Object[];
 }

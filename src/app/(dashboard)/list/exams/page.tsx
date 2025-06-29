@@ -1,4 +1,3 @@
-import FormDialog from "@/components/FormDialog";
 import TablePagination from "@/components/TablePagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -11,6 +10,7 @@ import { role } from "@/lib/settings";
 
 import { ArrowDownWideNarrow, ListFilter } from "lucide-react";
 import { Metadata } from "next";
+import FormContainer from "@/components/forms/FormContainer";
 
 export const metadata: Metadata = {
   title: "Exams",
@@ -55,8 +55,8 @@ const renderRow = (item: ExamList) => (
       <div className="flex items-center gap-1">
         {(role === "admin" || role === "teacher") && (
           <>
-            <FormDialog table="exam" type="update" data={item} />
-            <FormDialog table="exam" type="delete" id={item.id} />
+            <FormContainer table="exam" type="update" data={item} />
+            <FormContainer table="exam" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -93,7 +93,7 @@ async function ExamListPage({
               <ArrowDownWideNarrow />
             </Button>
             {(role === "admin" || role === "teacher") && (
-              <FormDialog table="exam" type="create" />
+              <FormContainer table="exam" type="create" />
             )}
           </div>
         </div>

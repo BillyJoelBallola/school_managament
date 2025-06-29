@@ -12,39 +12,84 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/inputs/InputField";
-import { Pencil, Trash } from "lucide-react";
+import { Loader2, Pencil, Trash } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-const schema = z.object({
-  name: z.string().min(1, { message: "Name is required!" }),
-  capacity: z.number().min(1, { message: "Capacity is required!" }),
-  grade: z.number().min(1, { message: "Grade is required!" }),
-  supervisor: z.string().min(1, { message: "Grade is required!" }),
-});
-
-type Input = z.infer<typeof schema>;
+import { ClassInputs, classSchema } from "@/lib/formValidations";
+import { startTransition, useActionState, useEffect } from "react";
+import { createClass, updateClass } from "@/actions/class.actions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import SelectField from "../inputs/SelectField";
 
 function AssignmentForm({
+  setOpen,
   type,
   data,
+  relatedData,
 }: {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   type: CreateUpdateFormType;
   data?: any;
+  relatedData?: any;
 }) {
+  const serverAction = type === "create" ? createClass : updateClass;
+
+  const [state, formAction, pending] = useActionState(serverAction, {
+    success: false,
+    error: false,
+  });
+
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Input>({
-    resolver: zodResolver(schema),
+  } = useForm<ClassInputs>({
+    resolver: zodResolver(classSchema),
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = handleSubmit((formData) => {
+    const parsedData = {
+      ...formData,
+      gradeId: formData.gradeId && Number(formData.gradeId),
+    };
+
+    startTransition(() => {
+      formAction(
+        type === "update" ? { id: data?.id, ...parsedData } : parsedData
+      );
+    });
   });
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) {
+      toast.success(
+        `Class has been ${type === "create" ? "created" : "updated"}!`
+      );
+      setOpen(false);
+      router.refresh();
+    }
+  }, [state.success]);
+
+  const { teachers, grades } = relatedData;
+
+  const formattedTeachersData = teachers.map(
+    (item: { name: string; surname: string; id: string }) => ({
+      value: item.id,
+      name: `${item.name} ${item.surname}`,
+    })
+  );
+
+  const formattedGradesData = grades.map(
+    (item: { id: number; level: number }) => ({
+      value: item.id.toString(),
+      name: item.level,
+    })
+  );
 
   return (
     <DialogContent className="w-[94%] sm:max-w-[50%]">
@@ -75,20 +120,21 @@ function AssignmentForm({
             register={register}
             error={errors.capacity}
           />
-          <InputField
+          <SelectField
             label="Grade"
-            name="grade"
-            type="number"
-            defaultValue={data?.grade}
-            register={register}
-            error={errors.grade}
+            name="gradeId"
+            control={control}
+            defaultValue={data?.gradeId.toString()}
+            error={errors.gradeId}
+            selectItems={formattedGradesData}
           />
-          <InputField
+          <SelectField
             label="Supervisor"
-            name="supervisor"
-            defaultValue={data?.supervisor}
-            register={register}
-            error={errors.supervisor}
+            name="supervisorId"
+            control={control}
+            defaultValue={data?.supervisorId}
+            error={errors.supervisorId}
+            selectItems={formattedTeachersData}
           />
         </div>
       </form>
@@ -98,7 +144,13 @@ function AssignmentForm({
             Cancel
           </Button>
         </DialogClose>
-        <Button variant="default" form="dialogForm" type="submit">
+        <Button
+          disabled={pending}
+          variant="default"
+          form="dialogForm"
+          type="submit"
+        >
+          {pending && <Loader2 className="animate-spin" />}{" "}
           {type === "create" ? "Create" : "Update"}
         </Button>
       </DialogFooter>
